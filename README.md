@@ -36,6 +36,16 @@ java -jar build/libs/patternhub-backend-0.1.0.jar
 
 API docs: `http://localhost:8080/swagger-ui.html`
 
+### Users API
+
+New endpoints were added to manage users:
+
+- `GET /api/users` — list users
+- `POST /api/users` — create user with JSON body `{ "name": "Alice", "email": "a@example.com" }`
+- `GET /api/users/{id}` — get user by id
+
+The backend includes a simple `User` entity, `UserRepository`, `UserService`, and `UserController`.
+
 ### Frontend (local)
 
 From `desafio/patternhub/patternhub-frontend`:
@@ -46,6 +56,26 @@ npm run dev
 ```
 
 The frontend proxies to `/api` — adjust if backend runs on another host.
+
+New frontend features:
+- Users view and creation form on the main page. It calls the new `/api/users` endpoints to list and create users.
+
+To run the frontend in Docker Compose dev mode (source bind-mounted and served by Vite):
+
+```bash
+# from desafio/patternhub
+docker compose up --build db backend
+docker compose up frontend-dev
+```
+
+Alternatively run locally:
+
+```bash
+# start backend first (docker compose or local)
+# then from patternhub-frontend
+npm install
+BACKEND_URL=http://localhost:8080 npm run dev
+```
 
 ## Project Structure
 
