@@ -13,3 +13,8 @@ data class User(
     val createdAt: Instant = Instant.now(),
     val status: String = "ACTIVE"
 )
+
+{
+    // JPA requires a no-arg constructor. Provide one for Hibernate.
+    constructor(): this(null, "", "", Instant.now(), "ACTIVE")
+}

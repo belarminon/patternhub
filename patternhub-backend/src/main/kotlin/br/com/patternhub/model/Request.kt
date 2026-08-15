@@ -17,3 +17,8 @@ data class Request(
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now()
 )
+
+{
+    // JPA requires a no-arg constructor. Provide one for Hibernate.
+    constructor(): this(null, User(), "", "", "NORMAL", "OPEN", Instant.now(), Instant.now())
+}
