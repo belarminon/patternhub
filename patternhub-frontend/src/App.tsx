@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import axios from 'axios'
+import './App.css'
 
 type Request = {
   id?: number
@@ -25,6 +26,9 @@ export default function App(){
   const [reqDesc, setReqDesc] = useState('')
   const [reqPriority, setReqPriority] = useState('NORMAL')
   const [reqUserId, setReqUserId] = useState<number | undefined>(undefined)
+  const [userFormWarning, setUserFormWarning] = useState<string | null>(null)
+  const [requestFormWarning, setRequestFormWarning] = useState<string | null>(null)
+  const [confirmModal, setConfirmModal] = useState<{title:string; onConfirm:()=>void} | null>(null)
   useEffect(()=>{ fetchList() }, [])
   async function fetchList(){
     try{
@@ -36,13 +40,13 @@ export default function App(){
   }
   async function createUser(e: React.FormEvent){
     e.preventDefault()
-    if (!name || !email) return alert('name and email required')
+    if (!name || !email) { setUserFormWarning('Name and email are required'); return }
     try{
       const res = await axios.post('/api/users', { name, email })
-      setUsers(prev => [...prev, res.data])
+      await fetchList()
       setName('')
       setEmail('')
-    }catch(err){ console.error(err); alert('Failed to create user') }
+    }catch(err){ console.error(err); setUserFormWarning('Failed to create user') }
   }
   async function startEditUser(u: User){
     setEditingUserId(u.id || null)
@@ -53,7 +57,7 @@ export default function App(){
     if (!editingUserId) return
     try{
       const res = await axios.put(`/api/users/${editingUserId}`, { name, email })
-      setUsers(prev => prev.map(u => u.id === res.data.id ? res.data : u))
+      await fetchList()
       setEditingUserId(null)
       setName('')
       setEmail('')
@@ -61,20 +65,23 @@ export default function App(){
   }
   async function deleteUser(id?: number){
     if (!id) return
-    if (!confirm('Delete user?')) return
-    try{
-      await axios.delete(`/api/users/${id}`)
-      setUsers(prev => prev.filter(u=>u.id!==id))
-    }catch(e){ console.error(e); alert('Failed to delete user') }
+    setConfirmModal({ title: 'Delete user?', onConfirm: async ()=>{
+      try{
+        await axios.delete(`/api/users/${id}`)
+        await fetchList()
+      }catch(e){ console.error(e); setUserFormWarning('Failed to delete user') }
+      setConfirmModal(null)
+    } })
   }
   async function createRequest(e: React.FormEvent){
     e.preventDefault()
-    if (!reqUserId) return alert('Select a user')
+    if (!reqUserId) { setRequestFormWarning('Select a user'); return }
     try{
       const res = await axios.post('/api/requests', { userId: reqUserId, type: reqType, description: reqDesc, priority: reqPriority })
-      setRequests(prev => [...prev, res.data])
+      await fetchList()
       setReqDesc('')
-    }catch(e){ console.error(e); alert('Failed to create request') }
+      setRequestFormWarning(null)
+    }catch(e){ console.error(e); setRequestFormWarning('Failed to create request') }
   }
   async function createUser(e: React.FormEvent){
     e.preventDefault()
@@ -94,14 +101,15 @@ export default function App(){
       </ul>
 
       <h2>Users</h2>
-      <form onSubmit={editingUserId ? (e)=>{e.preventDefault(); saveUser()} : createUser} style={{marginBottom:12}}>
+      <form onSubmit={editingUserId ? (e)=>{e.preventDefault(); saveUser()} : createUser} style={{marginBottom:12}} className="form-row">
         <input placeholder="Name" value={name} onChange={e=>setName(e.target.value)} />
         <input placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} style={{marginLeft:8}} />
         <button type="submit" style={{marginLeft:8}}>{editingUserId ? 'Save' : 'Create'}</button>
         {editingUserId && <button type="button" onClick={()=>{setEditingUserId(null); setName(''); setEmail('')}} style={{marginLeft:8}}>Cancel</button>}
       </form>
+      {userFormWarning && <div className="warning">{userFormWarning}</div>}
 
-      <table border={1} cellPadding={6} style={{borderCollapse:'collapse', width:'100%', marginBottom:16}}>
+      <table className="table">
         <thead>
           <tr><th>ID</th><th>Name</th><th>Email</th><th>Actions</th></tr>
         </thead>
@@ -121,9 +129,9 @@ export default function App(){
       </table>
 
       <h2>Requests</h2>
-      <form onSubmit={createRequest} style={{marginBottom:12}}>
-        <select value={reqUserId} onChange={e=>setReqUserId(Number(e.target.value))}>
-          <option value={undefined as any}>Select user</option>
+      <form onSubmit={createRequest} style={{marginBottom:12}} className="form-row">
+        <select value={reqUserId ?? ''} onChange={e=>setReqUserId(e.target.value ? Number(e.target.value) : undefined)}>
+          <option value=''>Select user</option>
           {users.map(u=> <option key={u.id} value={u.id}>{u.name}</option>)}
         </select>
         <input placeholder="Type" value={reqType} onChange={e=>setReqType(e.target.value)} style={{marginLeft:8}} />
@@ -135,8 +143,9 @@ export default function App(){
         </select>
         <button type="submit" style={{marginLeft:8}}>Create Request</button>
       </form>
+      {requestFormWarning && <div className="warning">{requestFormWarning}</div>}
 
-      <table border={1} cellPadding={6} style={{borderCollapse:'collapse', width:'100%'}}>
+      <table className="table">
         <thead>
           <tr><th>ID</th><th>User</th><th>Type</th><th>Description</th><th>Priority</th><th>Status</th></tr>
         </thead>
@@ -153,6 +162,18 @@ export default function App(){
           ))}
         </tbody>
       </table>
+
+      {confirmModal && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <div>{confirmModal.title}</div>
+            <div style={{textAlign:'right', marginTop:12}}>
+              <button onClick={()=>setConfirmModal(null)}>Cancel</button>
+              <button onClick={()=>{ confirmModal.onConfirm(); }} style={{marginLeft:8}}>Confirm</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
