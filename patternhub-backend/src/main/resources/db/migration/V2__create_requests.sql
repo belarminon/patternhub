@@ -1,0 +1,10 @@
+CREATE TABLE requests (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id),
+  type VARCHAR(100) NOT NULL,
+  description TEXT NOT NULL,
+  priority VARCHAR(50) NOT NULL,
+  status VARCHAR(50) NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
+);
