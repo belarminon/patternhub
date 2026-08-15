@@ -13,4 +13,6 @@ class UserService(private val repository: UserRepository) {
     fun listAll(): List<User> = repository.findAll()
 
     fun findById(id: Long): Optional<User> = repository.findById(id)
+
+    fun delete(id: Long) = repository.deleteById(id)
 }

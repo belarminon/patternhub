@@ -1,7 +1,9 @@
 package br.com.patternhub.controller
 
+import br.com.patternhub.dto.RequestCreateDTO
 import br.com.patternhub.model.Request
 import br.com.patternhub.service.RequestService
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -10,8 +12,8 @@ import org.springframework.web.bind.annotation.*
 class RequestController(private val service: RequestService) {
 
     @PostMapping
-    fun create(@RequestBody request: Request): ResponseEntity<Request> {
-        val created = service.submit(request)
+    fun create(@Valid @RequestBody dto: RequestCreateDTO): ResponseEntity<Request> {
+        val created = service.submit(dto)
         return ResponseEntity.ok(created)
     }
 
