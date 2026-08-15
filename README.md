@@ -36,6 +36,41 @@ java -jar build/libs/patternhub-backend-0.1.0.jar
 
 API docs: `http://localhost:8080/swagger-ui.html`
 
+### Basic API checks
+
+Use these curl examples to verify the API. Replace `localhost:8080` if your backend runs elsewhere.
+
+- List users:
+```bash
+curl -X GET http://localhost:8080/api/users
+```
+- Create user:
+```bash
+curl -X POST http://localhost:8080/api/users -H 'Content-Type: application/json' -d '{"name":"Alice","email":"alice@example.com"}'
+```
+- Update user:
+```bash
+curl -X PUT http://localhost:8080/api/users/1 -H 'Content-Type: application/json' -d '{"name":"Alice B","email":"aliceb@example.com"}'
+```
+- Delete user:
+```bash
+curl -X DELETE http://localhost:8080/api/users/1
+```
+- Create request (requires existing user id):
+```bash
+curl -X POST http://localhost:8080/api/requests -H 'Content-Type: application/json' -d '{"userId":1,"type":"GENERAL","description":"Test","priority":"NORMAL"}'
+```
+
+If you receive HTTP 400 or validation errors, the backend will return JSON describing the invalid fields. For HTTP 500, check backend logs:
+
+```bash
+docker compose logs backend --follow
+# or if running locally from patternhub-backend
+./gradlew bootRun
+```
+
+Note: If you get `./gradlew: No such file or directory` when running from WSL, run the wrapper from the repository root where `gradlew` exists, or use `docker compose up backend` to run the service in Docker.
+
 ### Users API
 
 New endpoints were added to manage users:
