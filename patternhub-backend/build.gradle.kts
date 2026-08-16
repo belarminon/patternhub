@@ -5,6 +5,7 @@ plugins {
     id("org.springframework.boot") version "3.2.0"
     id("io.spring.dependency-management") version "1.1.0"
     kotlin("plugin.spring") version "1.9.20"
+    // id("org.jetbrains.kotlin.plugin.jpa") version "1.9.20"
 }
 
 group = "br.com.patternhub"

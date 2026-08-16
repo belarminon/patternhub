@@ -14,6 +14,7 @@ type User = {
   id?: number
   name: string
   email: string
+  status?: string
 }
 
 export default function App(){
@@ -29,7 +30,9 @@ export default function App(){
   const [userFormWarning, setUserFormWarning] = useState<string | null>(null)
   const [requestFormWarning, setRequestFormWarning] = useState<string | null>(null)
   const [confirmModal, setConfirmModal] = useState<{title:string; onConfirm:()=>void} | null>(null)
+
   useEffect(()=>{ fetchList() }, [])
+
   async function fetchList(){
     try{
       const res = await axios.get('/api/requests')
@@ -38,6 +41,7 @@ export default function App(){
       setUsers(ur.data)
     }catch(e){ console.error(e) }
   }
+
   async function createUser(e: React.FormEvent){
     e.preventDefault()
     if (!name || !email) { setUserFormWarning('Name and email are required'); return }
@@ -48,11 +52,24 @@ export default function App(){
       setEmail('')
     }catch(err){ console.error(err); setUserFormWarning('Failed to create user') }
   }
+
+  
+  // async function createUser(e: React.FormEvent){
+  //   e.preventDefault()
+  //   try{
+  //     const res = await axios.post('/api/users', { name, email })
+  //     setUsers(prev => [...prev, res.data])
+  //     setName('')
+  //     setEmail('')
+  //   }catch(err){ console.error(err) }
+  // }
+
   async function startEditUser(u: User){
     setEditingUserId(u.id || null)
     setName(u.name)
     setEmail(u.email)
   }
+
   async function saveUser(){
     if (!editingUserId) return
     try{
@@ -63,6 +80,7 @@ export default function App(){
       setEmail('')
     }catch(e){ console.error(e); alert('Failed to update user') }
   }
+
   async function deleteUser(id?: number){
     if (!id) return
     setConfirmModal({ title: 'Delete user?', onConfirm: async ()=>{
@@ -73,6 +91,18 @@ export default function App(){
       setConfirmModal(null)
     } })
   }
+
+  async function inactivateUser(id?: number){
+    if (!id) return
+    setConfirmModal({ title: 'Inactivate user?', onConfirm: async ()=>{
+      try{
+        await axios.post(`/api/users/${id}/inactivate`)
+        await fetchList()
+      }catch(e){ console.error(e); setUserFormWarning('Failed to inactivate user') }
+      setConfirmModal(null)
+    } })
+  }
+
   async function createRequest(e: React.FormEvent){
     e.preventDefault()
     if (!reqUserId) { setRequestFormWarning('Select a user'); return }
@@ -83,23 +113,11 @@ export default function App(){
       setRequestFormWarning(null)
     }catch(e){ console.error(e); setRequestFormWarning('Failed to create request') }
   }
-  async function createUser(e: React.FormEvent){
-    e.preventDefault()
-    try{
-      const res = await axios.post('/api/users', { name, email })
-      setUsers(prev => [...prev, res.data])
-      setName('')
-      setEmail('')
-    }catch(err){ console.error(err) }
-  }
+
+
   return (
     <div style={{padding:20}}>
-      <h1>PatternHub</h1>
-      <h2>Requests</h2>
-      <ul>
-        {requests.map(r => <li key={r.id}>{r.description} ({r.priority})</li>)}
-      </ul>
-
+      <h1>PatternHub for Request</h1>
       <h2>Users</h2>
       <form onSubmit={editingUserId ? (e)=>{e.preventDefault(); saveUser()} : createUser} style={{marginBottom:12}} className="form-row">
         <input placeholder="Name" value={name} onChange={e=>setName(e.target.value)} />
@@ -121,6 +139,11 @@ export default function App(){
               <td>{u.email}</td>
               <td>
                 <button onClick={()=>startEditUser(u)}>Edit</button>
+                {u.status === 'ACTIVE' ? (
+                  <button onClick={()=>inactivateUser(u.id)} style={{marginLeft:8}}>Inactive</button>
+                ) : (
+                  <span className="active-badge" title="Active" style={{marginLeft:8}}>🟢</span>
+                )}
                 <button onClick={()=>deleteUser(u.id)} style={{marginLeft:8}}>Delete</button>
               </td>
             </tr>

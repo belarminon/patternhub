@@ -6,3 +6,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface UserRepository : JpaRepository<User, Long>
+
+@Modifying
+@Query("UPDATE User u SET u.status = 'INACTIVE' WHERE u.id = :id")
+fun inactivateUserById(@Param("id") id: Long): Int
