@@ -61,6 +61,20 @@ curl -X DELETE http://localhost:8080/api/users/1
 curl -X POST http://localhost:8080/api/requests -H 'Content-Type: application/json' -d '{"userId":1,"type":"GENERAL","description":"Test","priority":"NORMAL"}'
 ```
 
+## Recent changes (summary)
+
+Short summary of the work implemented in this repo for the PatternHub challenge:
+
+- Added Users and Requests APIs with DTO-based validation and a global exception handler that returns JSON validation/errors.
+- Fixed JPA instantiation issues by adding no-arg constructors to `User` and `Request` so Hibernate can instantiate entities (resolves 500 on `GET /api/users`).
+- Implemented `RequestCreateDTO` and server-side request creation flow that looks up `userId` and persists `Request` (avoids nested `user` JSON payloads).
+- Frontend: React+Vite UI updated to support listing/creating/editing/deleting users, creating requests, inline validation warnings, and confirmation modal flows.
+- Frontend UI change: Users table Actions column now shows an `Inactive` button when a user's `status` is `ACTIVE`; otherwise shows an active badge.
+- New endpoint: `POST /api/users/{id}/inactivate` to mark a user inactive (no request body) — documented above with a curl example.
+- Added Docker Compose for full-stack local runs, Flyway migrations for schema, and a basic CI workflow. Cleanup scripts were added to help remove tracked build artifacts (non-destructive by default).
+
+If you updated code, rebuild the backend (Docker Compose or `./gradlew bootJar`) before testing the API.
+
 If you receive HTTP 400 or validation errors, the backend will return JSON describing the invalid fields. For HTTP 500, check backend logs:
 
 ```bash
@@ -81,7 +95,9 @@ New endpoints were added to manage users:
 
 - `POST /api/users/{id}/inactivate` — mark a user inactive (no request body). Example:
 ```bash
-curl -X POST http://localhost:8080/api/users/1/inactivate
+curl -X 'PUT' \
+  'http://localhost:8080/api/users/4/inactivate' \
+  -H 'accept: */*'
 ```
 
 UI note: In the frontend users table the Actions column now reflects the user's `status` from the database: when a user is `ACTIVE` the Actions show a button labeled `Inactive` (to inactivate the user); when the user is not active an active badge is shown instead.

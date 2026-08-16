@@ -3,6 +3,7 @@ package br.com.patternhub.service
 import br.com.patternhub.model.User
 import br.com.patternhub.repository.UserRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service

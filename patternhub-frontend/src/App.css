@@ -5,7 +5,7 @@ h2 { font-size: 24px; }
 .table { border-collapse: collapse; width: 100%; margin-bottom: 16px }
 .table th, .table td { border: 1px solid #333; padding: 8px; text-align: left }
 .table th { background:#f4f4f4; font-weight: bold }
-.warning { color: #b94a48; background:#f8d7da; padding:8px; margin:8px 0 }
+.warning { color: #b94a48; background: #ffffff; padding:8px; margin:8px 0 }
 .modal-backdrop { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center }
 .modal { background: white; padding:16px; border-radius:8px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); width: 320px }
 .modal button { margin-left:8px }

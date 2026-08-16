@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-const backendTarget = process.env.BACKEND_URL || 'http://backend:8080'
+const backendTarget = process.env.BACKEND_URL || 'https://backend:8080'
 
 export default defineConfig({
   plugins: [react()],

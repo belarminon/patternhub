@@ -29,12 +29,12 @@ class UserController(private val service: UserService) {
 
     @PutMapping("/{id}/inactivate")
     fun inactivate(@PathVariable id: Long): ResponseEntity<Void> =
-        service.findById(id).
-            map { user ->
+        service.findById(id)
+            .map {
                 service.inactivateUser(id)
                 ResponseEntity.noContent().build<Void>()
             }
-        }.orElseGet{ ResponseEntity.notFound().build() }
+            .orElseGet{ ResponseEntity.notFound().build() }
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<Void> {
