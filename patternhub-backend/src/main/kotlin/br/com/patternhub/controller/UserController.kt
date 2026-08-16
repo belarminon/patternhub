@@ -27,11 +27,11 @@ class UserController(private val service: UserService) {
         } else ResponseEntity.notFound().build()
     }
 
-    @PutMapping("/{id}/inactivate")
-    fun inactivate(@PathVariable id: Long): ResponseEntity<Void> =
+    @PutMapping("/{id}/toggle-status")
+    fun toggleUserStatus(@PathVariable id: Long): ResponseEntity<Void> =
         service.findById(id)
             .map {
-                service.inactivateUser(id)
+                service.toggleUserStatus(id)
                 ResponseEntity.noContent().build<Void>()
             }
             .orElseGet{ ResponseEntity.notFound().build() }

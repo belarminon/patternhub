@@ -83,14 +83,14 @@ export default function App() {
     })
   }
 
-  async function inactivateUser(id?: number) {
+  async function toggleUserStatus(id?: number) {
     if (!id) return
     setConfirmModal({
-      title: 'Inactivate user?', onConfirm: async () => {
+      title: 'toggle-status user?', onConfirm: async () => {
         try {
-          await axios.put(`/api/users/${id}/inactivate`)
+          await axios.put(`/api/users/${id}/toggle-status`)
           await fetchList()
-        } catch (e) { console.error(e); setUserFormWarning('Failed to inactivate user') }
+        } catch (e) { console.error(e); setUserFormWarning('Failed to toggle user status') }
         setConfirmModal(null)
       }
     })
@@ -134,7 +134,7 @@ export default function App() {
 
                 <button type="button" onClick={() => startEditUser(u)}>Edit</button>
 
-                <button type="button" onClick={() => inactivateUser(u.id)} style={{ marginLeft: 8 }}>
+                <button type="button" onClick={() => toggleUserStatus(u.id)} style={{ marginLeft: 8 }}>
                   {u.status === 'ACTIVE' ? 'Inactive' : 'Active'}
                 </button>
 

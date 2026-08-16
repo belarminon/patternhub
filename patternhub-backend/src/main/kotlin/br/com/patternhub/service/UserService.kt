@@ -18,5 +18,5 @@ class UserService(private val repository: UserRepository) {
     fun delete(id: Long) = repository.deleteById(id)
 
     @Transactional
-    fun inactivateUser(id: Long): Int = repository.inactivateUserById(id)
+    fun toggleUserStatus(id: Long): Int = repository.toggleUserStatusById(id) 
 }
