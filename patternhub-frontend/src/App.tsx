@@ -53,17 +53,6 @@ export default function App(){
     }catch(err){ console.error(err); setUserFormWarning('Failed to create user') }
   }
 
-  
-  // async function createUser(e: React.FormEvent){
-  //   e.preventDefault()
-  //   try{
-  //     const res = await axios.post('/api/users', { name, email })
-  //     setUsers(prev => [...prev, res.data])
-  //     setName('')
-  //     setEmail('')
-  //   }catch(err){ console.error(err) }
-  // }
-
   async function startEditUser(u: User){
     setEditingUserId(u.id || null)
     setName(u.name)

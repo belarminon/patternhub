@@ -79,6 +79,11 @@ New endpoints were added to manage users:
 - `POST /api/users` — create user with JSON body `{ "name": "Alice", "email": "a@example.com" }`
 - `GET /api/users/{id}` — get user by id
 
+- `POST /api/users/{id}/inactivate` — mark a user inactive (no request body). Example:
+```bash
+curl -X POST http://localhost:8080/api/users/1/inactivate
+```
+
 UI note: In the frontend users table the Actions column now reflects the user's `status` from the database: when a user is `ACTIVE` the Actions show a button labeled `Inactive` (to inactivate the user); when the user is not active an active badge is shown instead.
 
 The backend includes a simple `User` entity, `UserRepository`, `UserService`, and `UserController`.

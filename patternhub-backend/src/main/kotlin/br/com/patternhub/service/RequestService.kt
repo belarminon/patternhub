@@ -13,18 +13,6 @@ class RequestService(
     private val userRepository: UserRepository,
     private val strategies: Map<String, ProcessingStrategy>
 ) {
-    // fun submit(dto: RequestCreateDTO): Request {
-    //     val user = userRepository.findById(dto.userId).orElseThrow { IllegalArgumentException("user not found: ${dto.userId}") }
-    //     val request = Request(user = user, type = dto.type, description = dto.description, priority = dto.priority)
-    //     val saved = repository.save(request)
-    //     val strategyKey = when (saved.priority.uppercase()) {
-    //         "PRIORITY", "URGENT" -> "priorityStrategy"
-    //         else -> "normalStrategy"
-    //     }
-    //     strategies[strategyKey]?.process(saved)
-    //     return saved
-    // }
-
     fun createFromDto(dto: RequestCreateDTO): Request {
         val user = userRepository.findById(dto.userId).orElseThrow { NoSuchElementException("User not found with ID: ${dto.userId}") }
 
